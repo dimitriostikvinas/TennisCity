@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="static\style.css" rel="stylesheet" type="text/css"/>
+    <title>Coaches</title>
+</head>
+<body>
+    <img src="static/logo.jpg" alt="image">
+    <h1>Coaches in {{city}}</h1>
+    <ul>
+        {% for coach in coaches %}
+            <li>
+                <strong>Name:</strong> {{ coach.username }}<br>
+                <strong>Birthday:</strong> {{ coach.date_of_birth }}<br>
+                <strong>Experience:</strong> {{ coach.experience }} <br>
+                <strong>Hourly rate:</strong> {{ coach.hourly_rate }}$<br>
+                <strong>Email:</strong> {{ coach.email }}<br>
+                <a href="">Book Session</a><br>
+            </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

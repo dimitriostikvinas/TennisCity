@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="static\style.css" rel="stylesheet" type="text/css"/>
+    <title>Athletes</title>
+</head>
+<script>
+    function openInvitationForm(athlete_user_id) {
+        var form = document.getElementById('invite_to_match-form-' + athlete_user_id);
+        form.style.display = 'block';
+    }
+</script>
+
+<body>
+    <img src="static/logo.jpg" alt="image">
+    <h1>Athletes in  {{city}}</h1>
+    <ul>
+        {% for athlete in athletes %}
+            <li>
+                <strong>Name:</strong> {{ athlete.username }}<br>
+                <strong>Height:</strong> {{ athlete.height }}<br>
+                <strong>Skill Level:</strong> {{ athlete.skill_level }}<br>
+                <strong>Birthday:</strong> {{ athlete.date_of_birth }}<br>
+                <strong>Email:</strong> {{ athlete.email }}<br>
+                <strong>Coached by:</strong> {{ athlete.coach_user_id }}<br>
+                <strong>Club:</strong> {{ athlete.club_id }}<br>
+
+                <button onclick="openInvitationForm({{athlete.user_id}})">Invite to match</button>
+                <br><br>
+                {% if athlete.is_teamate %}
+                    You are already paired with this player.<br>
+                {% else %}  
+                    <a href="#" class="invite-pair" data-player-id="{{ athlete.user_id }}">Invite to Pair</a><br>
+                {% endif %}
+            </li>
+        
+    </ul>
+
+
+
+        <form id="invite_to_match-form-{{athlete.user_id}}" action="{{ url_for('invite_to_match', player_id=athlete.user_id) }}" method="post" class="popup-form" >
+            <h2>Invite {{athlete.username}} to Match</h2>
+
+            <label for="venue">Select Venue:</label>
+
+            <select id="venue" name="venue">
+                {% for venue in venues %}
+                    <option value="{{ venue.id }}">
+                        <strong>ID:</strong> {{ venue.id }}<br/>
+                        <strong>Type:</strong> {{ venue.type }}<br/>
+                        <strong>City:</strong> {{ venue.city }}<br/>
+                    </option>             
+                {% endfor %}
+            </select><br/>
+
+            <label for="date">Select Date:</label>
+            <input id="date" name="date" type="date"/><br/>
+
+            <label for="referee">Ask for Referee:</label>
+            <input id="referee" name="referee" type="checkbox"/><br/>
+
+            <button type="submit" >Send Invitation</button>
+        </form>
+
+    {% endfor %}
+   
+   
+   
+   
+    <script>
+
+        document.addEventListener('DOMContentLoaded', function () {
+                const inviteToMatchLinks = document.querySelectorAll('.invite_to_match');
+
+                inviteToMatchLinks.forEach(link => {
+                    link.addEventListener('click', inviteToMatch);
+                });
+
+                function inviteToMatch(event) {
+                    this.style.display = 'none';
+
+                    const playerId = this.getAttribute('data-player-id');
+
+                    fetch(`/invite_to_match/${playerId}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        const message = document.createElement('p');
+                        message.innerHTML = data.message;
+                        this.parentNode.appendChild(message);
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+                }
+            });
+        
+            document.addEventListener('DOMContentLoaded', function () {
+                const invitePairLinks = document.querySelectorAll('.invite-pair');
+
+                invitePairLinks.forEach(link => {
+                    link.addEventListener('click', inviteToPair);
+                });
+
+                function inviteToPair(event) {
+                    this.style.display = 'none';
+            
+                    event.preventDefault();
+                    const playerId = this.getAttribute('data-player-id');
+
+                    fetch(`/invite_to_pair/${playerId}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        const message = document.createElement('p');
+                        message.innerHTML = data.message;
+                        this.parentNode.appendChild(message);
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+                }
+                
+            });
+    </script>
+</body>
+</html>

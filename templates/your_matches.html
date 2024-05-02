@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="static\style.css" rel="stylesheet" type="text/css"/>
+<title>Athlete plays Match List</title>
+<link href="static\style.css" rel="stylesheet" type="text/css"/>
+</head>
+<body>
+    <img src="static/logo.jpg" alt="image">
+    <h1>Athlete {{ logged_in_user_id }} plays match</h1>
+    <ul>
+            {% for entry in entries %}
+                <li>
+                <strong>Match ID:</strong> {{ entry.match_id }}<br/>
+                <strong>Opponent:</strong> {{ entry.other_username }}<br/>
+                <strong>Venue:</strong> {{ entry.venue_id }}<br/>
+                <strong>Date:</strong> {{entry.date }}<br/>
+                <strong>Result:</strong> {{entry.result}}      
+                    {% if entry.result=="not played yet" %}
+    <form action="/your_matches" id="confirmForm{{ entry.match_id }}" method="POST">
+        <select id="result{{ entry.match_id }}" name="new_result">
+            <option value="empty"></option>
+            <option value="won">won</option>
+            <option value="lost">lost</option>
+        </select>
+        <input name="match_id" type="hidden" value="{{ entry.match_id }}"/>
+        <button onclick="confirmResult('{{ entry.match_id }}')" type="button">Confirm result</button>
+    </form>     
+                    {% endif %}
+                </li>
+    <br/>
+            {% endfor %}
+        </ul>
+    <script>
+            function confirmResult(matchId) {
+                var selectId = "result" + matchId;
+                var formId = "confirmForm" + matchId;
+
+                var result = document.getElementById(selectId).value;
+                var form = document.getElementById(formId);
+
+                //  Hide the button
+                var button = form.querySelector("button");
+                button.classList.add("hidden");
+
+                // Submit the form asynchronously
+            fetch(form.action, {
+                method: 'POST',
+                body: new URLSearchParams(new FormData(form)),
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);  // Optional: Log the response data
+                // Reload the page after submission
+                location.reload();
+            })
+            .catch(error => console.error('Error:', error));
+            }
+        </script>
+</body>
+</html>

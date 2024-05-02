@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">    
+    <link href="static\style.css" rel="stylesheet" type="text/css"/>
+    <title>User Profile</title>
+
+</head>
+<body>
+    <img src="static/logo.jpg" alt="image">
+<h1>User Profile</h1>
+
+{% if user_data %}
+    <!-- Display User Information -->
+    <h2>User Information</h2> <button id="edit_user" onclick="openForm('user')">Edit </button>
+    <p>Username: {{ user_data.username }}</p>
+    <p>Date of Birth: {{ user_data.date_of_birth }}</p>
+    <p>Contact Number: {{ user_data.contact_number }}</p>
+    <p>Email: {{ user_data.email }}</p>
+    <p>Gender: {{ user_data.gender }}</p>
+    <p>Postal Code: {{ user_data.postal_code }}</p>
+    <p>City: {{ user_data.city }}</p>
+
+
+    {% if athlete_data %}
+        <!-- Display Athlete Information -->
+        <h2>Athlete Information</h2><button id="edit_athlete"  onclick="openForm('athlete')">Edit </button>
+        <p>Height: {{ athlete_data.height }}</p>
+        <p>Skill Level: {{ athlete_data.skill_level }}</p>
+    {% endif %}
+
+    {% if coach_data %}
+        <!-- Display Coach Information -->
+        <h2>Coach Information</h2><button id="edit_coach" onclick="openForm('coach')">Edit </button>
+        <p>Experience: {{ coach_data.experience }}</p>
+        <p>Hourly Rate: {{ coach_data.hourly_rate }}</p>
+    {% endif %}
+    
+
+    <!-- Pop-up form for editing -->
+    <div id="userForm" class="popup-form">
+        <h2>Edit User Information</h2>
+        <form id="editUserForm">
+            <label for="editUsername">Username:</label>
+            <input type="text" id="editUsername" name="editUsername" value="{{ user_data.username }}" required>
+    
+            <label for="editDateOfBirth">Date of Birth:</label>
+            <input type="date" id="editDateOfBirth" name="editDateOfBirth" value="{{ user_data.date_of_birth }}" required>
+    
+            <label for="editContactNumber">Contact Number:</label>
+            <input type="tel" id="editContactNumber" name="editContactNumber" value="{{ user_data.contact_number }}" required>
+    
+            <label for="editEmail">Email:</label>
+            <input type="email" id="editEmail" name="editEmail" value="{{ user_data.email }}" required>
+    
+            <label for="editGender">Gender:</label>
+            <select id="editGender" name="editGender" required>
+                <option value="male" {% if user_data.gender == 'male' %}selected{% endif %}>Male</option>
+                <option value="female" {% if user_data.gender == 'female' %}selected{% endif %}>Female</option>
+                <!-- Add more gender options as needed -->
+            </select>
+    
+            <label for="editPostalCode">Postal Code:</label>
+            <input type="text" id="editPostalCode" name="editPostalCode" value="{{ user_data.postal_code }}" required>
+    
+            <label for="editCity">City:</label>
+            <input type="text" id="editCity" name="editCity" value="{{ user_data.city }}" required>
+    
+            <button type="button" onclick="submitForm('user',{{user_data['id']}})">Save Changes</button>
+        </form>    
+    </div>
+    <div id="athleteForm" class="popup-form">
+       <!-- Athlete edit form content edit height and edit skill_level -->
+        <h2>Edit Athlete Information</h2>
+        <form id="editAthleteForm">
+            <label for="editHeight">Height:</label>
+            <input type="text" id="editHeight" name="editHeight" value="{{ athlete_data.height }}" required>
+    
+            <label for="editSkillLevel">Skill Level:</label>
+            <input type="text" id="editSkillLevel" name="editSkillLevel" value="{{ athlete_data.skill_level }}" required>
+    
+            <button type="button" onclick="submitForm('athlete',{{athlete_data['id']}})">Save Changes</button>
+        
+    </div>
+    <div id="coachForm" class="popup-form">
+        <!-- Coach edit form content -->
+    </div>
+
+{% else %}
+    <p>No user data found</p>
+{% endif %}
+
+<script>
+    function openForm(type) {
+        // Get the corresponding form based on the type
+        var form = document.getElementById(type + 'Form');
+
+        // Display the form as a pop-up
+        form.style.display = 'block';
+    }
+
+    function submitForm(type,userId) {
+        // Get form data based on the type
+        var formData;
+        if (type === 'user') {
+            formData = {
+                username: document.getElementById('editUsername').value,
+                dateOfBirth: document.getElementById('editDateOfBirth').value,
+                contactNumber: document.getElementById('editContactNumber').value,
+                email: document.getElementById('editEmail').value,
+                gender: document.getElementById('editGender').value,
+                postalCode: document.getElementById('editPostalCode').value,
+                city: document.getElementById('editCity').value,
+            };
+
+                    // Send formData to the server using Fetch API
+            fetch(`/update_user/${userId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData),
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log(data.message);  // Log the server response
+                // Reload the page to display the updated information after one second
+                setTimeout(() => {
+                    location.reload();
+                }, 20);
+      
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });   
+            // Close the form after submitting
+            document.getElementById('userForm').style.display = 'none';
+
+        } else if (type === 'athlete') {
+            // Handle athlete form data
+            // (You can implement a similar approach as the user form)
+
+            formData = {
+                height: document.getElementById('editHeight').value,
+                skillLevel: document.getElementById('editSkillLevel').value,
+            };
+
+                    // Send formData to the server using Fetch API
+            fetch(`/update_athlete/${userId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData),
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log(data.message);  // Log the server response
+                // Reload the page to display the updated information after one second
+                setTimeout(() => {
+                    location.reload();
+                }, 20);
+      
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+            // Close the form after submitting
+            document.getElementById('athleteForm').style.display = 'none';
+
+        } else if (type === 'coach') {
+            // Handle coach form data
+            // (You can implement a similar approach as the user form)
+        }
+    }
+    window.onclick = function(event) {
+        var forms = document.getElementsByClassName('popup-form');
+        var body = document.getElementsByTagName('body')[0];
+        for (var i = 0; i < forms.length; i++) {
+            var form = forms[i];
+            if (event.target == body) {
+                form.style.display = 'none';
+            }
+        }
+    }
+</script>
+</body>
+</html>

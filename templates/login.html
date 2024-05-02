@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login Page</title>
+    <link href="static\style.css" rel="stylesheet" type="text/css"/>
+</head>
+<body>
+    <img src="static/logo.jpg" alt="image">
+    <form id="loginForm">
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" required>
+        <br>
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required>
+        <br>
+        <button type="button" onclick="submitForm()">Login</button>
+    </form>
+    <button type="button" onclick="window.location.href = '/register'">Register</button>
+
+    <script>
+        function submitForm() {
+            // Use JavaScript to send a POST request to your Flask API with the entered credentials
+            // Update the 'action' attribute of the form to your API endpoint
+            // Handle the API response accordingly (e.g., redirect on success, show an error message on failure)
+             // Get the values of the username and password fields
+             var username = document.getElementById('username').value;
+             var password = document.getElementById('password').value;
+ 
+             // Create an object with the user credentials
+             var credentials = {
+                 username: username,
+                 password: password
+             };
+ 
+             // Send a POST request to the Flask API endpoint
+             fetch('/login', {
+                 method: 'POST',
+                 headers: {
+                     'Content-Type': 'application/json'
+                 },
+                 body: JSON.stringify(credentials)
+             })
+             .then(response => response.json())
+             .then(data => {
+                 // Handle the API response accordingly
+                 if (data.access_token) {
+                     // Successful login, redirect or perform other actions
+                     console.log('Login successful!');
+                     window.location.href = '/homepage';
+                 } else {
+                     // Failed login, show an error message or perform other actions
+                     console.error('Login failed:', data.error);
+                 }
+             })
+             .catch(error => {
+                 // Handle network or other errors
+                 console.error('Error:', error);
+             });
+        }
+    </script>
+</body>
+</html>

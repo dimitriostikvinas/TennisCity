@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Homepage</title>
+<link href="static\style.css" rel="stylesheet" type="text/css"/></head>
+<body>
+    <img src="static/logo.jpg" alt="image">
+    <h1>TennisCity</h1>
+
+    {%if is_athlete%}
+        <h2>{{user_name}} As athlete</h2>
+        <button onclick="loadAthletesInYourCityTemplate()">Challenge athletes</button>
+        <button onclick="loadYourMatchesTemplate()">Your matches</button>
+        <button onclick="loadYourPairsTemplate()">Your pairs</button>
+        <button onclick="loadCoachesInYourCityTemplate()">Find a Coach</button>
+    {% endif %}
+
+
+
+    {% if is_coach %}
+        <h2>{{user_name}} As coach</h2>
+        <button onclick="loadInvitationToCoachingTemplate()">Invitations to Coaching</button>
+    {% endif %}
+    
+    <br>
+    
+    <h2>General</h2>
+    <button onclick="loadCreateTournamentTemplate()">Create tournament</button>
+    {% if not is_coach %}
+        <button onclick="loadRegisterAsCoachTemplate()">Register as a coach</button>
+    {% endif %}
+    {% if not is_athlete %}
+        <button onclick="loadRegisterAsAthleteTemplate()">Register as an athlete</button>
+    {% endif %}
+
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <a href="/profile">Edit your profile</a>
+    <a href="/logout">Logout</a>
+<script>
+        function loadAthletesInYourCityTemplate() {
+            // Redirect to athletes.html
+            window.location.href = '/athletes_in_your_city';
+        }
+        function loadYourMatchesTemplate() {
+            // Redirect to your_matches.html
+            window.location.href = '/your_matches';
+        }
+        function loadCreateTournamentTemplate() {
+            // Redirect to your_matches.html
+            window.location.href = '/create_tournament';
+        }
+        function loadRegisterAsAthleteTemplate() {
+            // Redirect to your_matches.html
+            window.location.href = '/register_as_athlete';
+        }
+        function loadRegisterAsCoachTemplate() {
+            // Redirect to your_matches.html
+            window.location.href = '/register_as_coach';
+        }
+        function loadInvitationToCoachingTemplate() {
+            // Redirect to your_matches.html
+            window.location.href = '/invitation_to_coaching';
+        }
+        function loadCoachesInYourCityTemplate() {
+            // Redirect to your_matches.html
+            window.location.href = '/coaches_in_your_city';
+        }
+        function loadYourPairsTemplate() {
+            // Redirect to your_matches.html
+            window.location.href = '/your_pairs';
+        }
+    </script>
+</body>
+</html>

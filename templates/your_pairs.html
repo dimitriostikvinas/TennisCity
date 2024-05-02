@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="static\style.css" rel="stylesheet" type="text/css"/>
+    <title>Your Pairs</title>
+</head>
+<body>
+    <img src="static/logo.jpg" alt="image">
+    <h1>Your Pairs:</h1>
+
+    {% for pair in your_pairs %}
+        <p>Pair with {{ pair['teamate'].username }}</p>
+        <button type="button" onclick="deletePair({{pair['pair_id']}})">Delete Pair</button>
+    {% endfor %}
+
+</body>
+<script>
+    function deletePair(pairId) {
+        fetch(`/delete_pair/${pairId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        })
+        .then(response => {
+            if (response.ok) {
+                return response.json();
+            } else if (response.status === 401) {
+                window.location.href = '/login';  
+            } else {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+        })
+        .then(data => {
+            alert('Pair deleted successfully.');
+            setTimeout(() => {
+                window.location.href = '/your_pairs';
+            },0200);
+        }).catch(error => {
+            console.error('Error:', error);
+        });
+    }
+</script>
+</html>
